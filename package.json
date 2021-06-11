@@ -1,0 +1,25 @@
+{
+  "name": "delilah-resto-backend",
+  "version": "1.0.0",
+  "description": "Backend Delilah Restoran",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/anrocampa/delilah-resto-backend.git"
+  },
+  "author": "Andrea Campanella",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/anrocampa/delilah-resto-backend/issues"
+  },
+  "homepage": "https://gitlab.com/anrocampa/delilah-resto-backend#readme",
+  "directories": {
+    "doc": "doc"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
