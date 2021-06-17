@@ -1,8 +1,8 @@
 class Pedidos {
-  constructor(formaPago, estado, detalle, precioTotal) {
+  constructor(formaPago, estado, productos, precioTotal) {
     this.formaPago = formaPago;
     this.estado = estado;
-    this.detalle = detalle;
+    this.productos = productos;
     this.precioTotal = precioTotal;
   }
 }
