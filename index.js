@@ -102,6 +102,16 @@ server.post("/usuarios", (req, res) => {
   }
 });
 
+server.post("/login", (req, res) => {
+  let indice = loginUsuario(req.body.username, req.body.clave);
+
+  if (indice) {
+    res.status(200).json({ codigo: indice, mensaje: "Login correcto" });
+  } else {
+    res.status(404).json({ mensaje: "Usuario o Clave incorrecta" });
+  }
+});
+
 /**
  * @swagger
  * /usuarios:
@@ -151,13 +161,8 @@ server.put("/usuarios/:usuarioId", (req, res) => {
  *    - name: "username"
  *      in: "path"
  *      description: "Username a eliminar"
- *      required: tru
- *      type: "string"
- *    - name: body
- *      description: Objeto cuerpo de un usuario
- *      in: body
  *      required: true
- *      example: { "nombre": string, "apellido": string, "email": string, "direccion": string, "telefono": string, "username": string, "clave": string}
+ *      type: "string"
  *    produces:
  *      - "application/json"
  *    responses:
@@ -340,7 +345,7 @@ server.get("/pedidos", (req, res) => {
  *      in: body
  *      required: true
  *      type: "string"
- *      example: { "formaPago": string, "estado": string, "productos": string, "precioTotal": string }
+ *      example: { "formaPago": string, "productos": string, "precioTotal": string }
  *    produces:
  *      - "application/json"
  *    responses:
@@ -476,7 +481,8 @@ const updateUsuarios = (username, objUsuario) => {
       objUsuario.direccion,
       objUsuario.telefono,
       username,
-      objUsuario.clave
+      objUsuario.clave,
+      listaUsuarios[indice].esAdmin
     );
     listaUsuarios[indice] = nuevoUsuario;
     return true;
@@ -543,9 +549,11 @@ const createPedidos = (objPedido) => {
   listaPedidos.push(
     new Pedidos(
       objPedido.formaPago,
-      objPedido.estado,
+      "nuevo",
       objPedido.productos,
-      objPedido.precioTotal
+      objPedido.precioTotal,
+      new Date(),
+      objPedido.username
     )
   );
   return true;
@@ -561,7 +569,9 @@ const updatePedidos = (index, objPedido) => {
       objPedido.formaPago,
       objPedido.estado,
       objPedido.productos,
-      objPedido.precioTotal
+      objPedido.precioTotal,
+      listaPedidos[index].fecha,
+      listaPedidos[index].username
     );
     listaPedidos[index] = nuevoPedido;
     return true;
@@ -571,7 +581,7 @@ const updatePedidos = (index, objPedido) => {
 };
 
 const deletePedidos = (index) => {
-  if (index >= 0) {
+  if (index >= 0 && index < listaPedidos.length) {
     listaPedidos.splice(index, 1);
     return true;
   } else {
@@ -591,4 +601,19 @@ const existeUsuario = (usernameIn, emailIn) => {
   });
 
   return indice;
+};
+
+const loginUsuario = (username, clave) => {
+  let indice = existeUsuario(username, username);
+
+  if (indice >= 0 && indice < listaUsuarios.length) {
+    if (listaUsuarios[indice].clave === clave) {
+      listaUsuarios[indice].setLogin();
+      return indice;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
 };
