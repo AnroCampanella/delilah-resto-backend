@@ -21,6 +21,15 @@ class Usuarios {
     this.username = username;
     this.clave = clave;
     this.esAdmin = esAdmin;
+    this.estaLogin = false;
+  }
+
+  setLogin() {
+    this.estaLogin = true;
+  }
+
+  setLogoff() {
+    this.estaLogin = false;
   }
 }
 module.exports = Usuarios;
