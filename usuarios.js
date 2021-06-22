@@ -31,5 +31,16 @@ class Usuarios {
   setLogoff() {
     this.estaLogin = false;
   }
+
+  getDatos() {
+    return {
+      nombre: this.nombre,
+      apellido: this.apellido,
+      email: this.email,
+      direccion: this.direccion,
+      telefono: this.telefono,
+      username: this.username,
+    };
+  }
 }
 module.exports = Usuarios;
