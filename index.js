@@ -2,9 +2,11 @@ const express = require("express");
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
-const Usuarios = require("./usuarios.js");
-const Pedidos = require("./pedidos.js");
-const Productos = require("./productos.js");
+const Usuarios = require("./usuarios");
+const Pedidos = require("./pedidos");
+const Productos = require("./productos");
+const MedioDePago = require("./medioDePago");
+const HttpStatus = require("./constants");
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -27,12 +29,12 @@ server.use(express.json());
 let listaPedidos = [];
 let listaUsuarios = [];
 let listaProductos = [];
+let listaMedioDePagos = [];
 
 // creo el usuario Admin
 listaUsuarios.push(
   new Usuarios(
     "admin",
-    "",
     "admin@dominio.com",
     "",
     "",
@@ -44,23 +46,41 @@ listaUsuarios.push(
 
 // middleware local para verificar si el usuario es administrador
 const esAdmin = (req, res, next) => {
-  let usuarioAdmin = listaUsuarios[req.headers.token].esAdmin; //verifcaSiElUsuarioesAdmin(req.headers.username);
+  let token = parseInt(req.headers.token);
 
-  if (usuarioAdmin) {
-    next();
+  if (isNaN(token) || token < 0 || token >= listaUsuarios.length) {
+    res
+      .status(HttpStatus.Unauthorized)
+      .json({ mensaje: "Usuario no logueado" });
   } else {
-    res.status(403).send("No es Administrador");
+    let usuarioAdmin = listaUsuarios[token].esAdmin;
+    if (usuarioAdmin) {
+      next();
+    } else {
+      res.status(HttpStatus.Forbidden).send("No es Administrador");
+    }
   }
 };
 
 // middleware local para verificar si el usuario está conectado
 const esLogin = (req, res, next) => {
-  let estaLogin = listaUsuarios[req.headers.token].estaLogin; // verificarLogin(req.headers.token);
+  let token = parseInt(req.headers.token);
 
-  if (estaLogin) {
-    next();
+  if (isNaN(token) || token < 0 || token >= listaUsuarios.length) {
+    res
+      .status(HttpStatus.Unauthorized)
+      .json({ mensaje: "Usuario no logueado" });
   } else {
-    res.status(401).send("No esta logueado");
+    let estaLogin = listaUsuarios[token].estaLogin;
+    req.headers.token = token;
+
+    if (estaLogin) {
+      next();
+    } else {
+      res
+        .status(HttpStatus.Unauthorized)
+        .send({ mensaje: "Usuario no logueado" });
+    }
   }
 };
 
@@ -82,11 +102,11 @@ const esLogin = (req, res, next) => {
  *        description: "successful operation"
  *        schema:
  *          type: "string"
- *          example: [{ "nombre": string, "apellido": string, "email": string, "direccion": string, "telefono": string, "username": string }]
+ *          example: [{ "nombreApellido": string, "email": string, "direccion": string, "telefono": string, "username": string }]
  */
 server.get("/usuarios", esLogin, esAdmin, (req, res) => {
   let users = readUsuarios();
-  res.status(200).json(users);
+  res.status(HttpStatus.Ok).json(users);
 });
 
 /**
@@ -110,27 +130,29 @@ server.get("/usuarios", esLogin, esAdmin, (req, res) => {
  *        description: "successful operation"
  *        schema:
  *          type: "string"
- *          example: { "nombre": string, "apellido": string, "email": string, "direccion": string, "telefono": string, "username": string }
+ *          example: { "nombreApellido": string,  "email": string, "direccion": string, "telefono": string, "username": string }
  */
 
 server.get("/usuarios/:usuarioId", esLogin, (req, res) => {
-  let quienPide = parseInt(req.headers.token);
+  let quienPide = req.headers.token;
   let usuarioId = req.params.usuarioId;
 
   if (quienPide === 0) {
     // es el admin que pide datos de otro usuario
     let indice = existeUsuario(usuarioId);
     if (indice > 0) {
-      res.status(200).json(listaUsuarios[indice].getDatos());
+      res.status(HttpStatus.Ok).json(listaUsuarios[indice].getDatos());
     } else {
-      res.status(404).json({ mensaje: "Usuario no encontrado" });
+      res
+        .status(HttpStatus.NotFound)
+        .json({ mensaje: "Usuario no encontrado" });
     }
   } else {
     if (listaUsuarios[quienPide].username === usuarioId) {
       // es el mismo usuario que esta logueado que pide sus datos
-      res.status(200).json(listaUsuarios[quienPide].getDatos());
+      res.status(HttpStatus.Ok).json(listaUsuarios[quienPide].getDatos());
     } else {
-      res.status(403).send("No es Administrador");
+      res.status(HttpStatus.Forbidden).send("No es Administrador");
     }
   }
 });
@@ -149,7 +171,7 @@ server.get("/usuarios/:usuarioId", esLogin, (req, res) => {
  *      in: body
  *      required: true
  *      type: "string"
- *      example: { "nombre": string, "apellido": string, "email": string, "direccion": string, "telefono": string, "username": string, "clave": string}
+ *      example: { "nombreApellido": string, "email": string, "direccion": string, "telefono": string, "username": string, "clave": string}
  *    produces:
  *      - "application/json"
  *    responses:
@@ -164,9 +186,9 @@ server.post("/usuarios", (req, res) => {
   let success = createUsuarios(req.body);
 
   if (success) {
-    res.status(201).json({ mensaje: "Usuario creado" });
+    res.status(HttpStatus.Created).json({ mensaje: "Usuario creado" });
   } else {
-    res.status(403).json({ mensaje: "Usuario duplicado" });
+    res.status(HttpStatus.Forbidden).json({ mensaje: "Usuario duplicado" });
   }
 });
 
@@ -197,9 +219,13 @@ server.post("/login", (req, res) => {
   let indice = loginUsuario(req.body.username, req.body.clave);
 
   if (indice >= 0) {
-    res.status(200).json({ codigo: indice, mensaje: "Login correcto" });
+    res
+      .status(HttpStatus.Ok)
+      .json({ codigo: indice, mensaje: "Login correcto" });
   } else {
-    res.status(401).json({ mensaje: "Usuario o Clave incorrecta" });
+    res
+      .status(HttpStatus.Unauthorized)
+      .json({ mensaje: "Usuario o Clave incorrecta" });
   }
 });
 
@@ -221,7 +247,7 @@ server.post("/login", (req, res) => {
  *      description: Objeto cuerpo de un usuario
  *      in: body
  *      required: true
- *      example: { "nombre": string, "apellido": string, "email": string, "direccion": string, "telefono": string, "username": string, "clave": string}
+ *      example: { "nombreApellido": string, "email": string, "direccion": string, "telefono": string, "username": string, "clave": string}
  *    produces:
  *      - "application/json"
  *    responses:
@@ -234,9 +260,9 @@ server.put("/usuarios/:usuarioId", esLogin, (req, res) => {
   let success = updateUsuarios(req.params.usuarioId, req.body);
 
   if (success) {
-    res.status(200).json({ mensaje: "Usuario actualizado" });
+    res.status(HttpStatus.Ok).json({ mensaje: "Usuario actualizado" });
   } else {
-    res.status(404).json({ mensaje: "Usuario no encontrado" });
+    res.status(HttpStatus.NotFound).json({ mensaje: "Usuario no encontrado" });
   }
 });
 
@@ -265,9 +291,9 @@ server.put("/usuarios/:usuarioId", esLogin, (req, res) => {
 server.delete("/usuarios/:usuarioId", esLogin, esAdmin, (req, res) => {
   let success = deleteUsuarios(req.params.usuarioId);
   if (success) {
-    res.status(200).json({ mensaje: "Usuario eliminado" });
+    res.status(HttpStatus.Ok).json({ mensaje: "Usuario eliminado" });
   } else {
-    res.status(404).json({ mensaje: "Usuario no encontrado" });
+    res.status(HttpStatus.NotFound).json({ mensaje: "Usuario no encontrado" });
   }
 });
 
@@ -319,7 +345,7 @@ server.get("/productos", esLogin, (req, res) => {
  */
 server.post("/productos", esLogin, esAdmin, (req, res) => {
   createProductos(req.body);
-  res.status(201).json({ mensaje: "Producto creado" });
+  res.status(HttpStatus.Created).json({ mensaje: "Producto creado" });
 });
 
 /**
@@ -354,9 +380,9 @@ server.put("/productos/:indice", esLogin, esAdmin, (req, res) => {
   let success = updateProductos(req.params.indice, req.body);
 
   if (success) {
-    res.status(200).json({ mensaje: "Producto actualizado" });
+    res.status(HttpStatus.Ok).json({ mensaje: "Producto actualizado" });
   } else {
-    res.status(404).json({ mensaje: "Producto no encontrado" });
+    res.status(HttpStatus.NotFound).json({ mensaje: "Producto no encontrado" });
   }
 });
 
@@ -391,12 +417,138 @@ server.put("/productos/:indice", esLogin, esAdmin, (req, res) => {
 server.delete("/productos/:indice", esLogin, esAdmin, (req, res) => {
   let success = deleteProductos(req.params.indice);
   if (success) {
-    res.status(200).json({ mensaje: "Producto eliminado" });
+    res.status(HttpStatus.Ok).json({ mensaje: "Producto eliminado" });
   } else {
-    res.status(404).json({ mensaje: "Producto no encontrado" });
+    res.status(HttpStatus.NotFound).json({ mensaje: "Producto no encontrado" });
   }
 });
 
+/*
+ *Endpoints de medioDePagos
+ */
+
+/**
+ * @swagger
+ * /medioDePago:
+ *  get:
+ *    summary: "Retorna todos los medios de pagos"
+ *    description: Retorna un array de objetos con los medios de pagos
+ *    parameters: []
+ *    produces:
+ *      - "application/json"
+ *    responses:
+ *      "200":
+ *        description: "successful operation"
+ *        schema:
+ *          type: "string"
+ *          example: [{ "nombre": string, "descripcion": string, "icono": string }]
+ */
+server.get("/medioDePago", esLogin, (req, res) => {
+  let allMedioDePagos = readMedioDePagos();
+  res.json(allMedioDePagos);
+});
+/**
+ * @swagger
+ * /medioDePago:
+ *  post:
+ *    summary: "Crear un nuevo medioDePago"
+ *    description: Crea un medioDePago en el sistema,no valida que el medioDePago  este repetido
+ *    consumes:
+ *      - "application/json"
+ *    parameters:
+ *    - name: body
+ *      description: Objeto cuerpo de un medioDePago
+ *      in: body
+ *      required: true
+ *      type: "string"
+ *      example: {"nombre": string, "descripcion": string, "icono": string}
+ *    produces:
+ *      - "application/json"
+ *    responses:
+ *      "201":
+ *        description: "MedioDePago creado"
+ */
+server.post("/medioDePago", esLogin, esAdmin, (req, res) => {
+  createMedioDePagos(req.body);
+  res.status(HttpStatus.Created).json({ mensaje: "Medio de pago creado" });
+});
+/**
+ * @swagger
+ * /medioDePago/:indice:
+ *  put:
+ *    summary: "Modifica un medio de pago"
+ *    description: Modifica un medio de pago en el sistema, valida que el username o email no esté duplicado
+ *    consumes:
+ *      - "application/json"
+ *    parameters:
+ *    - name: "indice"
+ *      in: "path"
+ *      description: "indice del medio de pago a actualizar"
+ *      required: true
+ *      type: "string"
+ *    - name: body
+ *      description: Objeto cuerpo de un medio de pago
+ *      in: body
+ *      required: true
+ *      type: "string"
+ *      example: { "nombre": string, "descripcion": string, "icono": string }
+ *    produces:
+ *      - "application/json"
+ *    responses:
+ *      "200":
+ *        description: " medio de pago modificado"
+ *      "404":
+ *        description: "Medio de pago no encontrado"
+ */
+server.put("/medioDePago/:indice", esLogin, esAdmin, (req, res) => {
+  let success = updateMedioDePagos(req.params.indice, req.body);
+
+  if (success) {
+    res.status(HttpStatus.Ok).json({ mensaje: "Medio de pago actualizado" });
+  } else {
+    res
+      .status(HttpStatus.NotFound)
+      .json({ mensaje: "Medio de pago no encontrado" });
+  }
+});
+/**
+ * @swagger
+ * /medioDePago/:indice:
+ *  delete:
+ *    summary: "Elimina un medio de pago"
+ *    description: Elimina un medio de pago en el sistema
+ *    consumes:
+ *      - "application/json"
+ *    parameters:
+ *    - name: "indice"
+ *      in: "path"
+ *      description: "indice del medio de pago a eliminar"
+ *      required: true
+ *      type: "string"
+ *    - name: body
+ *      description: Objeto cuerpo de un medio de pago
+ *      in: body
+ *      required: true
+ *      type: "string"
+ *      example: { "nombre": string, "descripcion": string, "icono": string }
+ *    produces:
+ *      - "application/json"
+ *    responses:
+ *      "200":
+ *        description: "Medio de pago eliminado"
+ *      "404":
+ *        description: "Medio de pago no encontrado"
+ */
+server.delete("/medioDePago/:indice", esLogin, esAdmin, (req, res) => {
+  let success = deleteMedioDePagos(req.params.indice);
+  if (success) {
+    res.status(HttpStatus.Ok).json({ mensaje: "Medio de pago eliminado" });
+  } else {
+    res
+      .status(HttpStatus.NotFound)
+      .json({ mensaje: "Medio de pago no encontrado" });
+  }
+});
 /*
  * Endpoints de pedidos
  */
@@ -445,7 +597,7 @@ server.get("/pedidos", esLogin, (req, res) => {
  */
 server.post("/pedidos", esLogin, (req, res) => {
   createPedidos(req.body);
-  res.status(201).json({ mensaje: "Pedido creado" });
+  res.status(HttpStatus.Created).json({ mensaje: "Pedido creado" });
 });
 
 /**
@@ -480,9 +632,9 @@ server.put("/pedidos/:indice", esLogin, (req, res) => {
   //personas[parseInt(req.params.indice)] = req.body;
   let success = updatePedidos(req.params.indice, req.body);
   if (success) {
-    res.status(200).json({ mensaje: "Pedido actualizado" });
+    res.status(HttpStatus.Ok).json({ mensaje: "Pedido actualizado" });
   } else {
-    res.status(404).json({ mensaje: "Pedido no encontrado" });
+    res.status(HttpStatus.NotFound).json({ mensaje: "Pedido no encontrado" });
   }
 });
 
@@ -517,9 +669,9 @@ server.put("/pedidos/:indice", esLogin, (req, res) => {
 server.delete("/pedidos/:indice", esLogin, (req, res) => {
   let success = deletePedidos(req.params.indice);
   if (success) {
-    res.status(200).json({ mensaje: "Pedido eliminado" });
+    res.status(HttpStatus.Ok).json({ mensaje: "Pedido eliminado" });
   } else {
-    res.status(404).json({ mensaje: "Pedido no encontrado" });
+    res.status(HttpStatus.NotFound).json({ mensaje: "Pedido no encontrado" });
   }
 });
 
@@ -541,8 +693,7 @@ const createUsuarios = (objUsuario) => {
   if (indice < 0) {
     listaUsuarios.push(
       new Usuarios(
-        objUsuario.nombre,
-        objUsuario.apellido,
+        objUsuario.nombreApellido,
         objUsuario.email,
         objUsuario.direccion,
         objUsuario.telefono,
@@ -569,8 +720,7 @@ const updateUsuarios = (username, objUsuario) => {
 
   if (indice >= 0) {
     let nuevoUsuario = new Usuarios(
-      objUsuario.nombre,
-      objUsuario.apellido,
+      objUsuario.nombreApellido,
       objUsuario.email,
       objUsuario.direccion,
       objUsuario.telefono,
@@ -629,6 +779,48 @@ const updateProductos = (index, objProducto) => {
 const deleteProductos = (index) => {
   if (index >= 0) {
     listaProductos.splice(index, 1);
+    return true;
+  } else {
+    return false;
+  }
+};
+
+/*
+ * CRUD MedioDePagos
+ */
+
+const createMedioDePagos = (objMedioDePago) => {
+  listaMedioDePagos.push(
+    new MedioDePago(
+      objMedioDePago.nombre,
+      objMedioDePago.descripcion,
+      objMedioDePago.icono
+    )
+  );
+  return true;
+};
+
+const readMedioDePagos = () => {
+  return listaMedioDePagos;
+};
+
+const updateMedioDePagos = (index, objMedioDePago) => {
+  if (index >= 0 && index < listaMedioDePagos.length) {
+    let nuevoMedioDePago = new MedioDePago(
+      objMedioDePago.nombre,
+      objMedioDePago.descripcion,
+      objMedioDePago.icono
+    );
+    listaMedioDePagos[index] = nuevoMedioDePago;
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const deleteMedioDePagos = (index) => {
+  if (index >= 0) {
+    listaMedioDePagos.splice(index, 1);
     return true;
   } else {
     return false;

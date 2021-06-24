@@ -1,7 +1,6 @@
 class Usuarios {
   constructor(
-    nombre,
-    apellido,
+    nombreApellido,
     email,
     direccion,
     telefono,
@@ -9,12 +8,7 @@ class Usuarios {
     clave,
     esAdmin
   ) {
-    // el nombre y apellido los hice separados,
-    // la pantalla de crear cuenta "page-1-sign-up.png" aparece todo junto,
-    // pero en la pantalla "page-1-éxito.png" necesitamos el nombre solo sin apellido
-    // hay incongruencia en los datos, por lo que opté por ponerlos separados
-    this.nombre = nombre;
-    this.apellido = apellido;
+    this.nombreApellido = nombreApellido;
     this.email = email;
     this.direccion = direccion;
     this.telefono = telefono;
@@ -34,8 +28,7 @@ class Usuarios {
 
   getDatos() {
     return {
-      nombre: this.nombre,
-      apellido: this.apellido,
+      nombreApellido: this.nombreApellido,
       email: this.email,
       direccion: this.direccion,
       telefono: this.telefono,
