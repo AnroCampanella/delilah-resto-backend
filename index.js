@@ -2,11 +2,26 @@ const express = require("express");
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
-const Usuarios = require("./usuarios");
-const Pedidos = require("./pedidos");
-const Productos = require("./productos");
-const MedioDePago = require("./medioDePago");
-const HttpStatus = require("./constants");
+const Usuarios = require("./clases/usuarios");
+const Pedidos = require("./clases/pedidos");
+const Productos = require("./clases/productos");
+const MedioDePago = require("./clases/medioDePago");
+const { HTTP_STATUS, SERVER_PORT, PEDIDOS_STATUS } = require("./constants");
+
+const {
+  esLogin,
+  esAdmin,
+  validoIdProducto,
+  validoIdPedido,
+  validoIdMedioPago,
+} = require("./middleware");
+
+const {
+  listaMedioDePagos,
+  listaPedidos,
+  listaProductos,
+  listaUsuarios,
+} = require("./structures");
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -21,68 +36,14 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 const server = express();
-const PORT = 3000;
 
 server.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 server.use(express.json());
 
-let listaPedidos = [];
-let listaUsuarios = [];
-let listaProductos = [];
-let listaMedioDePagos = [];
-
 // creo el usuario Admin
 listaUsuarios.push(
-  new Usuarios(
-    "admin",
-    "admin@dominio.com",
-    "",
-    "",
-    "admin",
-    "lamegaclave",
-    true
-  )
+  new Usuarios("admin", "admin@dominio.com", "", "", "admin", "lamegaclave", true)
 );
-
-// middleware local para verificar si el usuario es administrador
-const esAdmin = (req, res, next) => {
-  let token = parseInt(req.headers.token);
-
-  if (isNaN(token) || token < 0 || token >= listaUsuarios.length) {
-    res
-      .status(HttpStatus.Unauthorized)
-      .json({ mensaje: "Usuario no logueado" });
-  } else {
-    let usuarioAdmin = listaUsuarios[token].esAdmin;
-    if (usuarioAdmin) {
-      next();
-    } else {
-      res.status(HttpStatus.Forbidden).send("No es Administrador");
-    }
-  }
-};
-
-// middleware local para verificar si el usuario está conectado
-const esLogin = (req, res, next) => {
-  let token = parseInt(req.headers.token);
-
-  if (isNaN(token) || token < 0 || token >= listaUsuarios.length) {
-    res
-      .status(HttpStatus.Unauthorized)
-      .json({ mensaje: "Usuario no logueado" });
-  } else {
-    let estaLogin = listaUsuarios[token].estaLogin;
-    req.headers.token = token;
-
-    if (estaLogin) {
-      next();
-    } else {
-      res
-        .status(HttpStatus.Unauthorized)
-        .send({ mensaje: "Usuario no logueado" });
-    }
-  }
-};
 
 /*
  * Endpoints de usuarios
@@ -105,56 +66,10 @@ const esLogin = (req, res, next) => {
  *          example: [{ "nombreApellido": string, "email": string, "direccion": string, "telefono": string, "username": string }]
  */
 server.get("/usuarios", esLogin, esAdmin, (req, res) => {
-  let users = readUsuarios();
-  res.status(HttpStatus.Ok).json(users);
-});
-
-/**
- * @swagger
- * /usuarios/:username:
- *  get:
- *    summary: "Retorna el usuario pedido"
- *    description: Retorna los datos del usuario pedido
- *    consumes:
- *      - "application/json"
- *    parameters:
- *    - name: "username"
- *      in: "path"
- *      description: "Username a retornar"
- *      required: true
- *      type: "string"
- *    produces:
- *      - "application/json"
- *    responses:
- *      "200":
- *        description: "successful operation"
- *        schema:
- *          type: "string"
- *          example: { "nombreApellido": string,  "email": string, "direccion": string, "telefono": string, "username": string }
- */
-
-server.get("/usuarios/:usuarioId", esLogin, (req, res) => {
-  let quienPide = req.headers.token;
-  let usuarioId = req.params.usuarioId;
-
-  if (quienPide === 0) {
-    // es el admin que pide datos de otro usuario
-    let indice = existeUsuario(usuarioId);
-    if (indice > 0) {
-      res.status(HttpStatus.Ok).json(listaUsuarios[indice].getDatos());
-    } else {
-      res
-        .status(HttpStatus.NotFound)
-        .json({ mensaje: "Usuario no encontrado" });
-    }
-  } else {
-    if (listaUsuarios[quienPide].username === usuarioId) {
-      // es el mismo usuario que esta logueado que pide sus datos
-      res.status(HttpStatus.Ok).json(listaUsuarios[quienPide].getDatos());
-    } else {
-      res.status(HttpStatus.Forbidden).send("No es Administrador");
-    }
-  }
+  let usuarios = listaUsuarios.map((usuario) => {
+    return usuario.getDatos();
+  });
+  res.status(HTTP_STATUS.Ok).json(usuarios);
 });
 
 /**
@@ -181,14 +96,19 @@ server.get("/usuarios/:usuarioId", esLogin, (req, res) => {
  *        description: "Usuario duplicado"
  */
 server.post("/usuarios", (req, res) => {
-  // no es necesario validar el reingreso de clave
-  // la pantalla de singup "page-1-sign-up.png" no lo tenía
-  let success = createUsuarios(req.body);
+  let { nombreApellido, email, direccion, telefono, username, clave } = req.body;
 
-  if (success) {
-    res.status(HttpStatus.Created).json({ mensaje: "Usuario creado" });
+  let codigo = listaUsuarios.findIndex((element, index) => {
+    return element.username === username || element.email === email;
+  });
+
+  if (codigo < 0) {
+    listaUsuarios.push(
+      new Usuarios(nombreApellido, email, direccion, telefono, username, clave, false)
+    );
+    res.status(HTTP_STATUS.Created).json({ mensaje: "Usuario creado" });
   } else {
-    res.status(HttpStatus.Forbidden).json({ mensaje: "Usuario duplicado" });
+    res.status(HTTP_STATUS.Forbidden).json({ mensaje: "Usuario duplicado" });
   }
 });
 
@@ -216,84 +136,19 @@ server.post("/usuarios", (req, res) => {
  *        description: "Usuario o clave incorrecta"
  */
 server.post("/login", (req, res) => {
-  let indice = loginUsuario(req.body.username, req.body.clave);
+  let { username, clave } = req.body;
 
-  if (indice >= 0) {
-    res
-      .status(HttpStatus.Ok)
-      .json({ codigo: indice, mensaje: "Login correcto" });
+  // tenemos un solo campo en el form (inputUsername) para ambos datos (email/username)
+  // puede ser un username o email el elemento username del POST
+  let codigo = listaUsuarios.findIndex((element, index) => {
+    return element.username === username || element.email === username;
+  });
+
+  if (listaUsuarios[codigo] && listaUsuarios[codigo].clave === clave) {
+    listaUsuarios[codigo].setLogin();
+    res.status(HTTP_STATUS.Ok).json({ codigo: codigo, mensaje: "Login correcto" });
   } else {
-    res
-      .status(HttpStatus.Unauthorized)
-      .json({ mensaje: "Usuario o Clave incorrecta" });
-  }
-});
-
-/**
- * @swagger
- * /usuarios/:username:
- *  put:
- *    summary: "Actualizar un usuario"
- *    description: Crea un usuario en el sistema, valida que el username o email no esté duplicado
- *    consumes:
- *      - "application/json"
- *    parameters:
- *    - name: "username"
- *      in: "path"
- *      description: "Username a actualizar"
- *      required: true
- *      type: "string"
- *    - name: body
- *      description: Objeto cuerpo de un usuario
- *      in: body
- *      required: true
- *      example: { "nombreApellido": string, "email": string, "direccion": string, "telefono": string, "username": string, "clave": string}
- *    produces:
- *      - "application/json"
- *    responses:
- *      "200":
- *        description: "Usuario actualizado"
- *      "404":
- *        description: "Usuario no encontrado"
- */
-server.put("/usuarios/:usuarioId", esLogin, (req, res) => {
-  let success = updateUsuarios(req.params.usuarioId, req.body);
-
-  if (success) {
-    res.status(HttpStatus.Ok).json({ mensaje: "Usuario actualizado" });
-  } else {
-    res.status(HttpStatus.NotFound).json({ mensaje: "Usuario no encontrado" });
-  }
-});
-
-/**
- * @swagger
- * /usuarios/:username:
- *  delete:
- *    summary: "Eliminar un usuario"
- *    description: Eliminar un usuario en el sistema
- *    consumes:
- *      - "application/json"
- *    parameters:
- *    - name: "username"
- *      in: "path"
- *      description: "Username a eliminar"
- *      required: true
- *      type: "string"
- *    produces:
- *      - "application/json"
- *    responses:
- *      "200":
- *        description: "Usuario eliminado"
- *      "404":
- *        description: "Usuario no encontrado"
- */
-server.delete("/usuarios/:usuarioId", esLogin, esAdmin, (req, res) => {
-  let success = deleteUsuarios(req.params.usuarioId);
-  if (success) {
-    res.status(HttpStatus.Ok).json({ mensaje: "Usuario eliminado" });
-  } else {
-    res.status(HttpStatus.NotFound).json({ mensaje: "Usuario no encontrado" });
+    res.status(HTTP_STATUS.Unauthorized).json({ mensaje: "Usuario o Clave incorrecta" });
   }
 });
 
@@ -318,8 +173,15 @@ server.delete("/usuarios/:usuarioId", esLogin, esAdmin, (req, res) => {
  *          example: [{ "nombre": string, "precio": string, "fotoUrl": string }]
  */
 server.get("/productos", esLogin, (req, res) => {
-  let allProductos = readProductos();
-  res.json(allProductos);
+  let lista = listaProductos.map((element, index) => {
+    return {
+      codigo: index,
+      nombre: element.nombre,
+      precio: element.precio,
+      fotoUrl: element.fotoUrl,
+    };
+  });
+  res.status(HTTP_STATUS.Ok).json(lista);
 });
 
 /**
@@ -344,22 +206,26 @@ server.get("/productos", esLogin, (req, res) => {
  *        description: "Producto creado"
  */
 server.post("/productos", esLogin, esAdmin, (req, res) => {
-  createProductos(req.body);
-  res.status(HttpStatus.Created).json({ mensaje: "Producto creado" });
+  let { nombre, precio, fotoUrl } = req.body;
+  codigoCreado = listaProductos.push(new Productos(nombre, precio, fotoUrl));
+
+  res
+    .status(HTTP_STATUS.Created)
+    .json({ codigo: codigoCreado - 1, mensaje: "Producto creado" });
 });
 
 /**
  * @swagger
- * /productos/:indice:
+ * /productos/:codigo:
  *  put:
  *    summary: "Modifica un producto"
  *    description: Modifica un producto en el sistema, valida que el username o email no esté duplicado
  *    consumes:
  *      - "application/json"
  *    parameters:
- *    - name: "indice"
+ *    - name: "codigo"
  *      in: "path"
- *      description: "indice del producto a actualizar"
+ *      description: "codigo del producto a actualizar"
  *      required: true
  *      type: "string"
  *    - name: body
@@ -376,28 +242,28 @@ server.post("/productos", esLogin, esAdmin, (req, res) => {
  *      "404":
  *        description: "Producto no encontrado"
  */
-server.put("/productos/:indice", esLogin, esAdmin, (req, res) => {
-  let success = updateProductos(req.params.indice, req.body);
+server.put("/productos/:codigo", esLogin, esAdmin, validoIdProducto, (req, res) => {
+  let { codigo } = req.params;
+  let { nombre, precio, fotoUrl } = req.body;
 
-  if (success) {
-    res.status(HttpStatus.Ok).json({ mensaje: "Producto actualizado" });
-  } else {
-    res.status(HttpStatus.NotFound).json({ mensaje: "Producto no encontrado" });
-  }
+  let nuevoProducto = new Productos(nombre, precio, fotoUrl);
+  listaProductos[codigo] = nuevoProducto;
+
+  res.status(HTTP_STATUS.Ok).json({ mensaje: "Producto actualizado" });
 });
 
 /**
  * @swagger
- * /productos/:indice:
+ * /productos/:codigo:
  *  delete:
  *    summary: "Elimina un producto"
  *    description: Elimina un producto en el sistema
  *    consumes:
  *      - "application/json"
  *    parameters:
- *    - name: "indice"
+ *    - name: "codigo"
  *      in: "path"
- *      description: "indice del producto a eliminar"
+ *      description: "codigo del producto a eliminar"
  *      required: true
  *      type: "string"
  *    - name: body
@@ -414,12 +280,161 @@ server.put("/productos/:indice", esLogin, esAdmin, (req, res) => {
  *      "404":
  *        description: "Producto no encontrado"
  */
-server.delete("/productos/:indice", esLogin, esAdmin, (req, res) => {
-  let success = deleteProductos(req.params.indice);
-  if (success) {
-    res.status(HttpStatus.Ok).json({ mensaje: "Producto eliminado" });
+server.delete("/productos/:codigo", esLogin, esAdmin, validoIdProducto, (req, res) => {
+  let { codigo } = req.params;
+  listaProductos.splice(codigo, 1);
+
+  res.status(HTTP_STATUS.Ok).json({ mensaje: "Producto eliminado" });
+});
+
+/*
+ * Endpoints de pedidos
+ */
+
+/**
+ * @swagger
+ * /pedidos:
+ *  get:
+ *    summary: "Retorna todos los pedidos"
+ *    description: Retorna un array de objetos con los pedidos del sistema
+ *    parameters: []
+ *    produces:
+ *    - "application/json"
+ *    responses:
+ *      "200":
+ *        description: "successful operation"
+ *        schema:
+ *          type: "string"
+ *          example: { "formaPago": string, "estado": string, "productos": string,"direccion": string,"fecha": datetime,"username": string }
+ */
+server.get("/pedidos", esLogin, (req, res) => {
+  let { tokenDeLogin } = req.headers; // quien está pidiendo
+
+  if (listaUsuarios[tokenDeLogin].esAdmin) {
+    // es el admin que pide datos de un pedido cualquiera
+    res.status(HTTP_STATUS.Ok).json(listaPedidos);
   } else {
-    res.status(HttpStatus.NotFound).json({ mensaje: "Producto no encontrado" });
+    let misPedidos = listaPedidos.filter((element, index) => {
+      return element.username === listaUsuarios[tokenDeLogin].username;
+    });
+    res.status(HTTP_STATUS.Ok).json(misPedidos);
+  }
+});
+
+/**
+ * @swagger
+ * /pedidos:
+ *  post:
+ *    summary: "Crear un nuevo pedido"
+ *    description: Crea un pedido en el sistema
+ *    consumes:
+ *    - "application/json"
+ *    parameters:
+ *    - name: body
+ *      description: Objeto cuerpo de un pedido
+ *      in: body
+ *      required: true
+ *      type: "string"
+ *      example: { "formaPago": string, "productos": string, "direccion": string }
+ *    produces:
+ *      - "application/json"
+ *    responses:
+ *      "201":
+ *        description: "Pedido creado"
+ */
+server.post("/pedidos", esLogin, (req, res) => {
+  let { tokenDeLogin } = req.headers; // quien está pidiendo
+  let { formaPago, productos, direccion } = req.body;
+
+  //TODO validar que forma Pago exista y que Productos existan
+  if (!direccion) {
+    direccion = listaUsuarios[tokenDeLogin].direccion;
+  }
+
+  let codigoCreado = listaPedidos.push(
+    new Pedidos(
+      formaPago,
+      productos,
+      direccion,
+      new Date(),
+      listaUsuarios[tokenDeLogin].username
+    )
+  );
+
+  res.status(HTTP_STATUS.Created).json({ codigo: codigoCreado - 1, mensaje: "Pedido creado" });
+});
+
+// TODO CAMBIAR ESTADO => FALTA SWAGGER
+server.post("/pedidos/:codigo/:estado", esLogin, esAdmin, validoIdPedido, (req, res) => {
+  let { codigo } = req.params; // codigo del pedido
+  let { estado } = req.params; // proximo estado del pedido
+
+  success = listaPedidos[codigo].setEstado(estado);
+
+  if (success) {
+    res.status(HTTP_STATUS.Ok).json({ mensaje: "Pedido actualizado" });
+  } else {
+    res.status(HTTP_STATUS.BadRequest).json({ mensaje: "Estado incorrecto" });
+  }
+});
+
+/**
+ * @swagger
+ * /pedidos/:codigo:
+ *  put:
+ *    summary: "Modificar un pedido"
+ *    description: Modifica un pedido en el sistema, valida que el codigo exista en el sistema
+ *    consumes:
+ *      - "application/json"
+ *    parameters:
+ *    - name: "codigo"
+ *      in: "path"
+ *      description: "codigo del pedido a actualizar"
+ *      required: true
+ *      type: "string"
+ *    - name: body
+ *      description: Objeto cuerpo de un pedido
+ *      in: body
+ *      required: true
+ *      type: "string"
+ *      example:  { "formaPago": string, "productos": string, "direccion": string }
+ *    produces:
+ *      - "application/json"
+ *    responses:
+ *      "200":
+ *        description: "Pedido actualizado"
+ *      "404":
+ *        description: "Pedido no encontrado"
+ */
+server.put("/pedidos/:codigo", esLogin, validoIdPedido, (req, res) => {
+  let { tokenDeLogin } = req.headers; // quien está pidiendo
+  let { codigo } = req.params; // codigo del pedido
+  let { formaPago, productos, direccion } = req.body;
+
+  if (listaPedidos[codigo].estado !== PEDIDOS_STATUS.Pendiente) {
+    res
+      .status(HTTP_STATUS.Forbidden)
+      .json({ mensaje: "Petición denegada, pedido no está pendiente" });
+  } else {
+    if (!direccion) {
+      direccion = listaUsuarios[tokenDeLogin].direccion;
+    }
+
+    if (listaUsuarios[tokenDeLogin].username === listaPedidos[codigo].username) {
+      let nuevoPedido = new Pedidos(
+        formaPago,
+        productos,
+        direccion,
+        listaPedidos[codigo].fecha,
+        listaPedidos[codigo].username
+      );
+      nuevoPedido.setEstado(listaPedidos[codigo].estado);
+      listaPedidos[codigo] = nuevoPedido;
+
+      res.status(HTTP_STATUS.Ok).json({ mensaje: "Pedido actualizado" });
+    } else {
+      res.status(HTTP_STATUS.Forbidden).json({ mensaje: "Autorización no valida" });
+    }
   }
 });
 
@@ -444,9 +459,9 @@ server.delete("/productos/:indice", esLogin, esAdmin, (req, res) => {
  *          example: [{ "nombre": string, "descripcion": string, "icono": string }]
  */
 server.get("/medioDePago", esLogin, (req, res) => {
-  let allMedioDePagos = readMedioDePagos();
-  res.json(allMedioDePagos);
+  res.status(HTTP_STATUS.Ok).json(listaMedioDePagos);
 });
+
 /**
  * @swagger
  * /medioDePago:
@@ -468,22 +483,29 @@ server.get("/medioDePago", esLogin, (req, res) => {
  *      "201":
  *        description: "MedioDePago creado"
  */
+
 server.post("/medioDePago", esLogin, esAdmin, (req, res) => {
-  createMedioDePagos(req.body);
-  res.status(HttpStatus.Created).json({ mensaje: "Medio de pago creado" });
+  let { nombre, descripcion, icono } = req.body;
+
+  let nuevoMedioDePago = new MedioDePago(nombre, descripcion, icono);
+  let codigoCreado = listaMedioDePagos.push(nuevoMedioDePago);
+
+  res
+    .status(HTTP_STATUS.Created)
+    .json({ codigo: codigoCreado - 1, mensaje: "Medio de pago creado" });
 });
 /**
  * @swagger
- * /medioDePago/:indice:
+ * /medioDePago/:codigo:
  *  put:
  *    summary: "Modifica un medio de pago"
  *    description: Modifica un medio de pago en el sistema, valida que el username o email no esté duplicado
  *    consumes:
  *      - "application/json"
  *    parameters:
- *    - name: "indice"
+ *    - name: "codigo"
  *      in: "path"
- *      description: "indice del medio de pago a actualizar"
+ *      description: "codigo del medio de pago a actualizar"
  *      required: true
  *      type: "string"
  *    - name: body
@@ -500,29 +522,28 @@ server.post("/medioDePago", esLogin, esAdmin, (req, res) => {
  *      "404":
  *        description: "Medio de pago no encontrado"
  */
-server.put("/medioDePago/:indice", esLogin, esAdmin, (req, res) => {
-  let success = updateMedioDePagos(req.params.indice, req.body);
+server.put("/medioDePago/:codigo", esLogin, esAdmin, validoIdMedioPago, (req, res) => {
+  let { codigo } = req.params;
+  let { nombre, descripcion, icono } = req.body;
 
-  if (success) {
-    res.status(HttpStatus.Ok).json({ mensaje: "Medio de pago actualizado" });
-  } else {
-    res
-      .status(HttpStatus.NotFound)
-      .json({ mensaje: "Medio de pago no encontrado" });
-  }
+  let nuevoMedioDePago = new MedioDePago(nombre, descripcion, icono);
+  listaMedioDePagos[codigo] = nuevoMedioDePago;
+
+  res.status(HTTP_STATUS.Ok).json({ mensaje: "Medio de pago actualizado" });
 });
+
 /**
  * @swagger
- * /medioDePago/:indice:
+ * /medioDePago/:codigo:
  *  delete:
  *    summary: "Elimina un medio de pago"
  *    description: Elimina un medio de pago en el sistema
  *    consumes:
  *      - "application/json"
  *    parameters:
- *    - name: "indice"
+ *    - name: "codigo"
  *      in: "path"
- *      description: "indice del medio de pago a eliminar"
+ *      description: "codigo del medio de pago a eliminar"
  *      required: true
  *      type: "string"
  *    - name: body
@@ -539,368 +560,14 @@ server.put("/medioDePago/:indice", esLogin, esAdmin, (req, res) => {
  *      "404":
  *        description: "Medio de pago no encontrado"
  */
-server.delete("/medioDePago/:indice", esLogin, esAdmin, (req, res) => {
-  let success = deleteMedioDePagos(req.params.indice);
-  if (success) {
-    res.status(HttpStatus.Ok).json({ mensaje: "Medio de pago eliminado" });
-  } else {
-    res
-      .status(HttpStatus.NotFound)
-      .json({ mensaje: "Medio de pago no encontrado" });
-  }
-});
-/*
- * Endpoints de pedidos
- */
+server.delete("/medioDePago/:codigo", esLogin, esAdmin, validoIdMedioPago, (req, res) => {
+  let { codigo } = req.params;
 
-/**
- * @swagger
- * /pedidos:
- *  get:
- *    summary: "Retorna todos los pedidos"
- *    description: Retorna un array de objetos con los pedidos del sistema
- *    parameters: []
- *    produces:
- *    - "application/json"
- *    responses:
- *      "200":
- *        description: "successful operation"
- *        schema:
- *          type: "string"
- *          example: { "formaPago": string, "estado": string, "productos": string,"precioTotal": string }
- */
-server.get("/pedidos", esLogin, (req, res) => {
-  let allPedidos = readPedidos();
-  res.json(allPedidos);
+  listaMedioDePagos.splice(codigo, 1);
+
+  res.status(HTTP_STATUS.Ok).json({ mensaje: "Medio de pago eliminado" });
 });
 
-/**
- * @swagger
- * /pedidos:
- *  post:
- *    summary: "Crear un nuevo pedido"
- *    description: Crea un pedido en el sistema
- *    consumes:
- *    - "application/json"
- *    parameters:
- *    - name: body
- *      description: Objeto cuerpo de un pedido
- *      in: body
- *      required: true
- *      type: "string"
- *      example: { "formaPago": string, "productos": string, "precioTotal": string }
- *    produces:
- *      - "application/json"
- *    responses:
- *      "201":
- *        description: "Pedido creado"
- */
-server.post("/pedidos", esLogin, (req, res) => {
-  createPedidos(req.body);
-  res.status(HttpStatus.Created).json({ mensaje: "Pedido creado" });
+server.listen(SERVER_PORT, () => {
+  console.log(`Servidor backend Delilah en ejecución... ${SERVER_PORT}`);
 });
-
-/**
- * @swagger
- * /pedidos/:indice:
- *  put:
- *    summary: "Modificar un pedido"
- *    description: Modifica un pedido en el sistema, valida que el indice exista en el sistema
- *    consumes:
- *      - "application/json"
- *    parameters:
- *    - name: "indice"
- *      in: "path"
- *      description: "indice del pedido a actualizar"
- *      required: true
- *      type: "string"
- *    - name: body
- *      description: Objeto cuerpo de un pedido
- *      in: body
- *      required: true
- *      type: "string"
- *      example: { "formaPago": string, "estado": string, "productos": string,"precioTotal": string }
- *    produces:
- *      - "application/json"
- *    responses:
- *      "200":
- *        description: "Pedido actualizado"
- *      "404":
- *        description: "Pedido no encontrado"
- */
-server.put("/pedidos/:indice", esLogin, (req, res) => {
-  //personas[parseInt(req.params.indice)] = req.body;
-  let success = updatePedidos(req.params.indice, req.body);
-  if (success) {
-    res.status(HttpStatus.Ok).json({ mensaje: "Pedido actualizado" });
-  } else {
-    res.status(HttpStatus.NotFound).json({ mensaje: "Pedido no encontrado" });
-  }
-});
-
-/**
- * @swagger
- * /pedidos/:indice:
- *  delete:
- *    summary: "Elimina un pedido"
- *    description: Elimina un pedido en el sistema
- *    consumes:
- *      - "application/json"
- *    parameters:
- *    - name: "indice"
- *      in: "path"
- *      description: "indice del pedido a eliminar"
- *      required: true
- *      type: "string"
- *    - name: body
- *      description: Objeto cuerpo de un pedido
- *      in: body
- *      required: true
- *      type: "string"
- *      example: { "nombre": string, "precio": string, "fotoUrl": string }
- *    produces:
- *      - "application/json"
- *    responses:
- *      "200":
- *        description: "Pedido eliminado"
- *      "404":
- *        description: "Pedido no encontrado"
- */
-server.delete("/pedidos/:indice", esLogin, (req, res) => {
-  let success = deletePedidos(req.params.indice);
-  if (success) {
-    res.status(HttpStatus.Ok).json({ mensaje: "Pedido eliminado" });
-  } else {
-    res.status(HttpStatus.NotFound).json({ mensaje: "Pedido no encontrado" });
-  }
-});
-
-server.listen(PORT, () => {
-  console.log(`Servidor backend Delilah en ejecución... ${PORT}`);
-});
-
-/*
- * funciones
- */
-
-/*
- * CRUD Usuarios
- */
-
-const createUsuarios = (objUsuario) => {
-  let indice = existeUsuario(objUsuario.username, objUsuario.email);
-
-  if (indice < 0) {
-    listaUsuarios.push(
-      new Usuarios(
-        objUsuario.nombreApellido,
-        objUsuario.email,
-        objUsuario.direccion,
-        objUsuario.telefono,
-        objUsuario.username,
-        objUsuario.clave,
-        false
-      )
-    );
-    return true;
-  } else {
-    return false;
-  }
-};
-
-const readUsuarios = () => {
-  let otrosUsuarios = listaUsuarios.map((usuario) => {
-    return usuario.getDatos();
-  });
-  return otrosUsuarios;
-};
-
-const updateUsuarios = (username, objUsuario) => {
-  let indice = existeUsuario(username, objUsuario.email);
-
-  if (indice >= 0) {
-    let nuevoUsuario = new Usuarios(
-      objUsuario.nombreApellido,
-      objUsuario.email,
-      objUsuario.direccion,
-      objUsuario.telefono,
-      username,
-      objUsuario.clave,
-      listaUsuarios[indice].esAdmin
-    );
-    listaUsuarios[indice] = nuevoUsuario;
-    return true;
-  } else {
-    return false;
-  }
-};
-
-const deleteUsuarios = (username) => {
-  let indice = listaUsuarios.findIndex((element, index) => {
-    return element.username === username;
-  });
-  if (indice >= 0) {
-    listaUsuarios.splice(indice, 1);
-    return true;
-  } else {
-    return false;
-  }
-};
-
-/*
- * CRUD Productos
- */
-
-const createProductos = (objProducto) => {
-  listaProductos.push(
-    new Productos(objProducto.nombre, objProducto.precio, objProducto.fotoUrl)
-  );
-  return true;
-};
-
-const readProductos = () => {
-  return listaProductos;
-};
-
-const updateProductos = (index, objProducto) => {
-  if (index >= 0 && index < listaProductos.length) {
-    let nuevoProducto = new Productos(
-      objProducto.nombre,
-      objProducto.precio,
-      objProducto.fotoUrl
-    );
-    listaProductos[index] = nuevoProducto;
-    return true;
-  } else {
-    return false;
-  }
-};
-
-const deleteProductos = (index) => {
-  if (index >= 0) {
-    listaProductos.splice(index, 1);
-    return true;
-  } else {
-    return false;
-  }
-};
-
-/*
- * CRUD MedioDePagos
- */
-
-const createMedioDePagos = (objMedioDePago) => {
-  listaMedioDePagos.push(
-    new MedioDePago(
-      objMedioDePago.nombre,
-      objMedioDePago.descripcion,
-      objMedioDePago.icono
-    )
-  );
-  return true;
-};
-
-const readMedioDePagos = () => {
-  return listaMedioDePagos;
-};
-
-const updateMedioDePagos = (index, objMedioDePago) => {
-  if (index >= 0 && index < listaMedioDePagos.length) {
-    let nuevoMedioDePago = new MedioDePago(
-      objMedioDePago.nombre,
-      objMedioDePago.descripcion,
-      objMedioDePago.icono
-    );
-    listaMedioDePagos[index] = nuevoMedioDePago;
-    return true;
-  } else {
-    return false;
-  }
-};
-
-const deleteMedioDePagos = (index) => {
-  if (index >= 0) {
-    listaMedioDePagos.splice(index, 1);
-    return true;
-  } else {
-    return false;
-  }
-};
-
-/*
- * CRUD Pedidos
- */
-
-const createPedidos = (objPedido) => {
-  listaPedidos.push(
-    new Pedidos(
-      objPedido.formaPago,
-      "nuevo",
-      objPedido.productos,
-      objPedido.precioTotal,
-      new Date(),
-      objPedido.username
-    )
-  );
-  return true;
-};
-
-const readPedidos = () => {
-  return listaPedidos;
-};
-
-const updatePedidos = (index, objPedido) => {
-  if (index >= 0 && index < listaPedidos.length) {
-    let nuevoPedido = new Pedidos(
-      objPedido.formaPago,
-      objPedido.estado,
-      objPedido.productos,
-      objPedido.precioTotal,
-      listaPedidos[index].fecha,
-      listaPedidos[index].username
-    );
-    listaPedidos[index] = nuevoPedido;
-    return true;
-  } else {
-    return false;
-  }
-};
-
-const deletePedidos = (index) => {
-  if (index >= 0 && index < listaPedidos.length) {
-    listaPedidos.splice(index, 1);
-    return true;
-  } else {
-    return false;
-  }
-};
-
-/*
- *
- * Funciones extras
- *
- */
-
-const existeUsuario = (usernameIn, emailIn = "") => {
-  let indice = listaUsuarios.findIndex((element, index) => {
-    return element.username === usernameIn || element.email === emailIn;
-  });
-
-  return indice;
-};
-
-// loguear un usuario
-const loginUsuario = (username, clave) => {
-  let indice = existeUsuario(username, username);
-
-  if (indice >= 0 && indice < listaUsuarios.length) {
-    if (listaUsuarios[indice].clave === clave) {
-      listaUsuarios[indice].setLogin();
-      return indice;
-    } else {
-      return -1;
-    }
-  } else {
-    return -1;
-  }
-};
