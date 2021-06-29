@@ -1,20 +1,12 @@
 class Usuarios {
-  constructor(
-    nombreApellido,
-    email,
-    direccion,
-    telefono,
-    username,
-    clave,
-    esAdmin
-  ) {
+  constructor(nombreApellido, email, direccion, telefono, username, clave, esAdmin) {
     this.nombreApellido = nombreApellido;
     this.email = email;
     this.direccion = direccion;
     this.telefono = telefono;
     this.username = username;
     this.clave = clave;
-    this.esAdmin = esAdmin;
+    this.esAdmin = esAdmin; // a futuro poder agregar mas usuarios admin
     this.estaLogin = false;
   }
 
