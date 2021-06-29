@@ -1,4 +1,14 @@
-const HttpStatus = {
+const SERVER_PORT = 3000;
+
+const PEDIDOS_STATUS = {
+  Pendiente: "pendiente", //cuando el usuario inicia su pedido.
+  Confirmado: "confirmado", // cuando el usuario cierra su pedido.
+  Preparacion: "preparación", // cuando el administrador comienza a preparar el pedido.
+  Enviado: "enviado", // cuando el administrador envía el pedido.
+  Entregado: "entregado", //cuando el administrador entrega el pedido.
+};
+
+const HTTP_STATUS = {
   // obtenido desde https://angular.io/api/common/http/HttpStatusCode
   Continue: 100,
   SwitchingProtocols: 101,
@@ -65,4 +75,4 @@ const HttpStatus = {
   NetworkAuthenticationRequired: 511,
 };
 
-module.exports = HttpStatus;
+module.exports = { SERVER_PORT, HTTP_STATUS, PEDIDOS_STATUS };
