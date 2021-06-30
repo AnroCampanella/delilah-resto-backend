@@ -1,1144 +1,897 @@
 {
-	"info": {
-		"_postman_id": "b7bb220e-9c4e-4133-a8a5-0b6d2fbbcbdd",
-		"name": "Delilah Restoran",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Usuarios",
-			"item": [
-				{
-					"name": "login admin",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\": \"admin\",\n    \"clave\": \"lamegaclave\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://127.0.0.1:3000/login",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "usuarios (admin)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "127.0.0.1:3000/usuarios",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"usuarios"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "usuario - andrea",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombreApellido\": \"andrea campanella\",\n    \"email\": \"andrea@andrea.com\",\n    \"direccion\": \"uy\",\n    \"telefono\": \"+1 234567890\",\n    \"username\": \"andrea\",\n    \"clave\": \"123454321\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/usuarios",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"usuarios"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "usuario - andrea emailDuplicado",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombreApellido\": \"andreaDup campanellaDup\",\n    \"email\": \"andrea@andrea.com\",\n    \"direccion\": \"uyDup\",\n    \"telefono\": \"+1 234567890Dup\",\n    \"username\": \"andreaDup\",\n    \"clave\": \"123454321Dup\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/usuarios",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"usuarios"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "login username - andrea",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\": \"andrea\",\n    \"clave\": \"123454321\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://127.0.0.1:3000/login",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "login email - andrea",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\": \"andrea@andrea.com\",\n    \"clave\": \"123454321\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://127.0.0.1:3000/login",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "usuario - andrea2",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombreApellido\": \"andrea2campanella2\",\n    \"email\": \"andrea2@andrea2.com\",\n    \"direccion\": \"uy2\",\n    \"telefono\": \"+1 2222222222\",\n    \"username\": \"andrea2\",\n    \"clave\": \"222222\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/usuarios",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"usuarios"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "usuario - andrea3",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombreApellido\": \"andrea3campanella3\",\n    \"email\": \"andrea3@andrea3.com\",\n    \"direccion\": \"uy3\",\n    \"telefono\": \"+1 3333333333\",\n    \"username\": \"andrea3\",\n    \"clave\": \"333333\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/usuarios",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"usuarios"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "usuario Freddie",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\": \"queen_freddie\",\n    \"nombre\": \"Freddie\",\n    \"apellido\": \"Mercury\",\n    \"email\": \"a@a.com68\",\n    \"telefono\": \"+44 777722347533\",\n    \"direccion\": \"1 Logan pefe, Londos, UK\",\n    \"clave\": \"123435\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/usuarios",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"usuarios"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "login username - andrea2",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\": \"andrea2\",\n    \"clave\": \"222222\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://127.0.0.1:3000/login",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"login"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Productos",
-			"item": [
-				{
-					"name": "productos",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "token",
-								"value": "1",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "127.0.0.1:3000/productos/",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"productos",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "productos - combo (admin)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"Combo XL\",\n    \"precio\": \"400\",\n    \"fotoUrl\": \"http://fotos.com/combo_xl\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/productos",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"productos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "productos - papas (admin)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"Papas Fritas\",\n    \"precio\": \"100\",\n    \"fotoUrl\": \"http://fotos.com/papas_fritas\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/productos",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"productos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "productos - cafe (admin)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"Cafe & Medialunas\",\n    \"precio\": \"150\",\n    \"fotoUrl\": \"http://fotos.com/cafe_medialunas\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/productos",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"productos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "productos  (admin)",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n        \"nombre\": \"Papas Medianas\",\n        \"precio\": \"120\",\n        \"fotoUrl\": \"HTTP://pepe.com/papas_medianas\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/productos/1",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"productos",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "productos (admin)",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "127.0.0.1:3000/productos/0",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"productos",
-								"0"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Pedidos",
-			"item": [
-				{
-					"name": "pedidos andrea",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "token",
-								"value": "1",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pedidos todos admin",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pedidos 1-1 (sin direccion)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "1",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"formaPago\": \"tarjeta\",\n    \"productos\": [\n        {\n            \"codigo\": 0,\n            \"cantidad\": 1\n        },\n        {\n            \"codigo\": 1,\n            \"cantidad\": 1\n        }\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pedidos 1-2 (con direccion)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "1",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"formaPago\": \"tarjeta\",\n    \"productos\": [\n        {\n            \"codigo\": 1,\n            \"cantidad\": 1\n        },\n        {\n            \"codigo\": 2,\n            \"cantidad\": 1\n        }\n    ],\n    \"direccion\": \"London, UK\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pedidos 2-1 (sin direccion)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "2",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"formaPago\": \"efectivo\",\n    \"productos\": [\n        {\n            \"codigo\": 0,\n            \"cantidad\": 1\n        },\n        {\n            \"codigo\": 2,\n            \"cantidad\": 1\n        }\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pedidos 2-2 (con direccion)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "2",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"formaPago\": \"efectivo\",\n    \"productos\": [\n        {\n            \"codigo\": 0,\n            \"cantidad\": 2\n        },\n        {\n            \"codigo\": 2,\n            \"cantidad\": 2\n        }\n    ],\n    \"direccion\": \"Paris, FR\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pedidos Set Confirmado (admin)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos/1/Confirmado",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos",
-								"1",
-								"Confirmado"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pedidos Set Preparacion (admin)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos/1/Preparacion",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos",
-								"1",
-								"Preparacion"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pedidos Set Enviado (admin)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos/2/Enviado",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos",
-								"2",
-								"Enviado"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pedidos Set Entregado (admin)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos/3/Entregado",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos",
-								"3",
-								"Entregado"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pedidos 0 - andrea",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "token",
-								"value": "1",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"formaPago\": \"tarjeta\",\n    \"productos\": [\n        {\n            \"codigo\": 0,\n            \"cantidad\": 10\n        },\n        {\n            \"codigo\": 1,\n            \"cantidad\": 11\n        }\n    ],\n    \"direccion\": \"Madrid, ES\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos/0",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos",
-								"0"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pedidos 1 - andrea2 - Entregado",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "token",
-								"value": "2",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"formaPago\": \"tarjeta4\",\n    \"estado\": \"preparando\",\n    \"productos\": [\n        {\n            \"nombre\": \"combo6\",\n            \"precio\": \"4356\",\n            \"fotoUrl\": \"HTTP://pepe.com/foto 6\"\n        },\n        {\n            \"nombre\": \"papas\",\n            \"precio\": \"123\",\n            \"fotoUrl\": \"HTTP://pepe.com/foto 6\"\n        }\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/pedidos/3",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"pedidos",
-								"3"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Medios de Pago",
-			"item": [
-				{
-					"name": "mediosdepago",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "token",
-								"value": "1",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "127.0.0.1:3000/mediodepago/",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"mediodepago",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "mediodepago Visa",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"Visa Itau\",\n    \"descripcion\": \"Tarjeta de credito VISA banco Itau\",\n    \"icono\": \"tarjeta\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/mediodepago",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"mediodepago"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "mediodepago contado",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"Efectivo\",\n    \"descripcion\": \"Pago en efectivo\",\n    \"icono\": \"efectivo\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/mediodepago",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"mediodepago"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "mediodepago",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"Visa Santander\",\n    \"descripcion\": \"Tarjeta de credito VISA banco Santander\",\n    \"icono\": \"tarjeta\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:3000/mediodepago/1",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"mediodepago",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "mediodepago",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "token",
-								"value": "0",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "127.0.0.1:3000/mediodepago/0",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3000",
-							"path": [
-								"mediodepago",
-								"0"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "b7bb220e-9c4e-4133-a8a5-0b6d2fbbcbdd",
+    "name": "Delilah Restoran",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "login admin",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"admin\",\n    \"clave\": \"lamegaclave\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/login",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "usuarios (admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "127.0.0.1:3000/usuarios",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["usuarios"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "usuario - andrea",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombreApellido\": \"andrea campanella\",\n    \"email\": \"andrea@andrea.com\",\n    \"direccion\": \"uy\",\n    \"telefono\": \"+1 234567890\",\n    \"username\": \"andrea\",\n    \"clave\": \"123454321\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/usuarios",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["usuarios"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "usuario - andrea emailDuplicado",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombreApellido\": \"andreaDup campanellaDup\",\n    \"email\": \"andrea@andrea.com\",\n    \"direccion\": \"uyDup\",\n    \"telefono\": \"+1 234567890Dup\",\n    \"username\": \"andreaDup\",\n    \"clave\": \"123454321Dup\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/usuarios",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["usuarios"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login username - andrea",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"andrea\",\n    \"clave\": \"123454321\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/login",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login email - andrea",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"andrea@andrea.com\",\n    \"clave\": \"123454321\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/login",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "usuario - andrea2",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombreApellido\": \"andrea2campanella2\",\n    \"email\": \"andrea2@andrea2.com\",\n    \"direccion\": \"uy2\",\n    \"telefono\": \"+1 2222222222\",\n    \"username\": \"andrea2\",\n    \"clave\": \"222222\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/usuarios",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["usuarios"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "usuario - andrea3",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombreApellido\": \"andrea3campanella3\",\n    \"email\": \"andrea3@andrea3.com\",\n    \"direccion\": \"uy3\",\n    \"telefono\": \"+1 3333333333\",\n    \"username\": \"andrea3\",\n    \"clave\": \"333333\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/usuarios",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["usuarios"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "usuario Freddie",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"queen_freddie\",\n    \"nombre\": \"Freddie\",\n    \"apellido\": \"Mercury\",\n    \"email\": \"a@a.com68\",\n    \"telefono\": \"+44 777722347533\",\n    \"direccion\": \"1 Logan pefe, Londos, UK\",\n    \"clave\": \"123435\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/usuarios",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["usuarios"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login username - andrea2",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"andrea2\",\n    \"clave\": \"222222\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/login",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Productos",
+      "item": [
+        {
+          "name": "productos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "token",
+                "value": "1",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "127.0.0.1:3000/productos/",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["productos", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "productos - combo (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Combo XL\",\n    \"precio\": \"400\",\n    \"fotoUrl\": \"http://fotos.com/combo_xl\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/productos",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["productos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "productos - papas (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Papas Fritas\",\n    \"precio\": \"100\",\n    \"fotoUrl\": \"http://fotos.com/papas_fritas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/productos",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["productos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "productos - cafe (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Cafe & Medialunas\",\n    \"precio\": \"150\",\n    \"fotoUrl\": \"http://fotos.com/cafe_medialunas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/productos",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["productos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "productos  (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n        \"nombre\": \"Papas Medianas\",\n        \"precio\": \"120\",\n        \"fotoUrl\": \"HTTP://pepe.com/papas_medianas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/productos/1",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["productos", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "productos (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "127.0.0.1:3000/productos/0",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["productos", "0"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pedidos",
+      "item": [
+        {
+          "name": "pedidos andrea",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "token",
+                "value": "1",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos todos admin",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos 1-1 (sin direccion)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "1",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"formaPago\": \"tarjeta\",\n    \"productos\": [\n        {\n            \"codigo\": 0,\n            \"cantidad\": 1\n        },\n        {\n            \"codigo\": 1,\n            \"cantidad\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos 1-2 (con direccion)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "1",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"formaPago\": \"tarjeta\",\n    \"productos\": [\n        {\n            \"codigo\": 1,\n            \"cantidad\": 1\n        },\n        {\n            \"codigo\": 2,\n            \"cantidad\": 1\n        }\n    ],\n    \"direccion\": \"London, UK\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos 2-1 (sin direccion)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "2",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"formaPago\": \"efectivo\",\n    \"productos\": [\n        {\n            \"codigo\": 0,\n            \"cantidad\": 1\n        },\n        {\n            \"codigo\": 2,\n            \"cantidad\": 1\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos 2-2 (con direccion)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "2",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"formaPago\": \"efectivo\",\n    \"productos\": [\n        {\n            \"codigo\": 0,\n            \"cantidad\": 2\n        },\n        {\n            \"codigo\": 2,\n            \"cantidad\": 2\n        }\n    ],\n    \"direccion\": \"Paris, FR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos Set Confirmado (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos/0/Confirmado",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos", "0", "Confirmado"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos Set Preparacion (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos/1/Preparacion",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos", "1", "Preparacion"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos Set Enviado (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos/2/Enviado",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos", "2", "Enviado"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos Set Entregado (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos/3/Entregado",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos", "3", "Entregado"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos 0 - andrea",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "token",
+                "value": "1",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"formaPago\": \"tarjeta\",\n    \"productos\": [\n        {\n            \"codigo\": 0,\n            \"cantidad\": 10\n        },\n        {\n            \"codigo\": 1,\n            \"cantidad\": 11\n        }\n    ],\n    \"direccion\": \"Madrid, ES\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos/0",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos", "0"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos 1 - andrea2 - Entregado",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "token",
+                "value": "2",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"formaPago\": \"tarjeta\",\n    \"productos\": [\n        {\n            \"codigo\": 0,\n            \"cantidad\": 10\n        },\n        {\n            \"codigo\": 1,\n            \"cantidad\": 11\n        }\n    ],\n    \"direccion\": \"Madrid, ES\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/pedidos/3",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["pedidos", "3"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Medios de Pago",
+      "item": [
+        {
+          "name": "mediosdepago",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "127.0.0.1:3000/mediodepago/",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["mediodepago", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "mediodepago Visa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Visa Itau\",\n    \"descripcion\": \"Tarjeta de credito VISA banco Itau\",\n    \"icono\": \"tarjeta\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/mediodepago",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["mediodepago"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "mediodepago contado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Efectivo\",\n    \"descripcion\": \"Pago en efectivo\",\n    \"icono\": \"efectivo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/mediodepago",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["mediodepago"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "mediodepago",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Visa Santander\",\n    \"descripcion\": \"Tarjeta de credito VISA banco Santander\",\n    \"icono\": \"tarjeta\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:3000/mediodepago/1",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["mediodepago", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "mediodepago",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "token",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "127.0.0.1:3000/mediodepago/0",
+              "host": ["127", "0", "0", "1"],
+              "port": "3000",
+              "path": ["mediodepago", "0"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
 }
