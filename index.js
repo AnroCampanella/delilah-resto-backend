@@ -614,20 +614,20 @@ server.get("/medioDePago", esLogin, (req, res) => {
  *      - "application/json"
  *    responses:
  *      "201":
- *        description: "MedioDePago creado"
- *        schema:
- *          type: "string"
- *          example: { "mensaje": "MedioDePago creado" }
- *     "401":
- *        description: "Unauthorized"
- *        schema:
- *          type: "string"
- *          example: { "mensaje": "Usuario no logueado" }
+ *         description: "MedioDePago creado"
+ *         schema:
+ *           type: "string"
+ *           example: { "mensaje": "MedioDePago creado" }
+ *      "401":
+ *         description: "Unauthorized"
+ *         schema:
+ *           type: "string"
+ *           example: { "mensaje": "Usuario no logueado" }
  *      "403":
- *        description: "Forbidden"
- *        schema:
- *          type: "string"
- *          example: { "mensaje": "No es Administrador" }
+ *         description: "Forbidden"
+ *         schema:
+ *           type: "string"
+ *           example: { "mensaje": "No es Administrador" }
  */
 server.post("/medioDePago", esLogin, esAdmin, (req, res) => {
   let { nombre, descripcion, icono } = req.body;
