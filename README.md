@@ -16,8 +16,13 @@ cd delilah-resto-backend
 npm install
 ```
 
-## Usage
+## Uso
 
 ```console
 nodemon index.js
 ```
+
+
+Importar colección de peticiones en PostMan
+archivo: Delilah Restoran.postman_collection.json
+
