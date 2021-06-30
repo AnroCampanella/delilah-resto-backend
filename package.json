@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/anrocampa/delilah-resto-backend.git"
+    "url": "git+https://github.com/AnroCampanella/delilah-resto-backend.git"
   },
   "author": "Andrea Campanella",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/anrocampa/delilah-resto-backend/issues"
+    "url": "https://github.com/AnroCampanella/delilah-resto-backend/issues"
   },
-  "homepage": "https://gitlab.com/anrocampa/delilah-resto-backend#readme",
+  "homepage": "https://github.com/AnroCampanella/delilah-resto-backend#readme",
   "directories": {
     "doc": "doc"
   },
