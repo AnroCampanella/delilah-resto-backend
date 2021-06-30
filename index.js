@@ -64,6 +64,16 @@ listaUsuarios.push(
  *        schema:
  *          type: "string"
  *          example: [{ "nombreApellido": string, "email": string, "direccion": string, "telefono": string, "username": string }]
+ *      "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
+ *      "403":
+ *        description: "Forbidden"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "No es Administrador" }
  */
 server.get("/usuarios", esLogin, esAdmin, (req, res) => {
   let usuarios = listaUsuarios.map((usuario) => {
@@ -91,9 +101,15 @@ server.get("/usuarios", esLogin, esAdmin, (req, res) => {
  *      - "application/json"
  *    responses:
  *      "201":
- *        description: "Usuario creado"
+ *        description: "Created"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje":  "Usuario creado" }
  *      "403":
- *        description: "Usuario duplicado"
+ *        description: "Forbidden"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario duplicado" }
  */
 server.post("/usuarios", (req, res) => {
   let { nombreApellido, email, direccion, telefono, username, clave } = req.body;
@@ -132,8 +148,14 @@ server.post("/usuarios", (req, res) => {
  *    responses:
  *      "200":
  *        description: "Login correcto"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Login correcto" }
  *      "401":
  *        description: "Usuario o clave incorrecta"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario o clave incorrecta" }
  */
 server.post("/login", (req, res) => {
   let { username, clave } = req.body;
@@ -170,7 +192,12 @@ server.post("/login", (req, res) => {
  *        description: "successful operation"
  *        schema:
  *          type: "string"
- *          example: [{ "nombre": string, "precio": string, "fotoUrl": string }]
+ *          example: [{ "codigo": string, "nombre": string, "precio": string, "fotoUrl": string }]
+ *      "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
  */
 server.get("/productos", esLogin, (req, res) => {
   let lista = listaProductos.map((element, index) => {
@@ -204,7 +231,21 @@ server.get("/productos", esLogin, (req, res) => {
  *    responses:
  *      "201":
  *        description: "Producto creado"
+ *        schema:
+ *          type: "string"
+ *          example: [{ "codigo" : codigoCreado, "mensaje" : "Producto creado" }]
+ *      "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
+ *      "403":
+ *        description: "Forbidden"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "No es Administrador" }
  */
+
 server.post("/productos", esLogin, esAdmin, (req, res) => {
   let { nombre, precio, fotoUrl } = req.body;
   codigoCreado = listaProductos.push(new Productos(nombre, precio, fotoUrl));
@@ -237,10 +278,27 @@ server.post("/productos", esLogin, esAdmin, (req, res) => {
  *    produces:
  *      - "application/json"
  *    responses:
- *      "200":
- *        description: "Producto modificado"
+ *      "201":
+ *        description: "Producto actualizado"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Producto actualizado" }
+ *      "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
+ *      "403":
+ *        description: "Forbidden"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "No es Administrador" }
  *      "404":
- *        description: "Producto no encontrado"
+ *        description: "NotFound"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Producto no encontrado" }
+ *
  */
 server.put("/productos/:codigo", esLogin, esAdmin, validoIdProducto, (req, res) => {
   let { codigo } = req.params;
@@ -277,8 +335,24 @@ server.put("/productos/:codigo", esLogin, esAdmin, validoIdProducto, (req, res) 
  *    responses:
  *      "200":
  *        description: "Producto eliminado"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Producto eliminado" }
+ *      "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
+ *      "403":
+ *        description: "Forbidden"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "No es Administrador" }
  *      "404":
- *        description: "Producto no encontrado"
+ *        description: "NotFound"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Producto no encontrado" }
  */
 server.delete("/productos/:codigo", esLogin, esAdmin, validoIdProducto, (req, res) => {
   let { codigo } = req.params;
@@ -306,6 +380,11 @@ server.delete("/productos/:codigo", esLogin, esAdmin, validoIdProducto, (req, re
  *        schema:
  *          type: "string"
  *          example: { "formaPago": string, "estado": string, "productos": string,"direccion": string,"fecha": datetime,"username": string }
+ *      "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
  */
 server.get("/pedidos", esLogin, (req, res) => {
   let { tokenDeLogin } = req.headers; // quien está pidiendo
@@ -341,12 +420,19 @@ server.get("/pedidos", esLogin, (req, res) => {
  *    responses:
  *      "201":
  *        description: "Pedido creado"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Pedido creado" }
+ *      "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
  */
 server.post("/pedidos", esLogin, (req, res) => {
   let { tokenDeLogin } = req.headers; // quien está pidiendo
   let { formaPago, productos, direccion } = req.body;
 
-  //TODO validar que forma Pago exista y que Productos existan
   if (!direccion) {
     direccion = listaUsuarios[tokenDeLogin].direccion;
   }
@@ -364,7 +450,32 @@ server.post("/pedidos", esLogin, (req, res) => {
   res.status(HTTP_STATUS.Created).json({ codigo: codigoCreado - 1, mensaje: "Pedido creado" });
 });
 
-// TODO CAMBIAR ESTADO => FALTA SWAGGER
+/**
+ * @swagger
+ * /pedidos/:codigo/:estado:
+ *  post:
+ *    summary: "Cambiar estado de un pedido"
+ *    description: Cambia el estado de un pedido en el sistema
+ *    consumes:
+ *      - "application/json"
+ *    parameters:
+ *    - name: "codigo"
+ *      in: "path"
+ *      description: "codigo del pedido a modificar"
+ *      required: true
+ *      type: "string"
+ *    - name: "estado"
+ *      in: path
+ *      description: "estado del pedido a modificar"
+ *      required: true
+ *      type: "string"
+ *      enum:
+ *        - Pendiente
+ *        - Confirmado
+ *        - Preparacion
+ *        - Enviado
+ *        - Entregado
+ */
 server.post("/pedidos/:codigo/:estado", esLogin, esAdmin, validoIdPedido, (req, res) => {
   let { codigo } = req.params; // codigo del pedido
   let { estado } = req.params; // proximo estado del pedido
@@ -403,8 +514,20 @@ server.post("/pedidos/:codigo/:estado", esLogin, esAdmin, validoIdPedido, (req, 
  *    responses:
  *      "200":
  *        description: "Pedido actualizado"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Pedido actualizado" }
+ *      "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
  *      "404":
- *        description: "Pedido no encontrado"
+ *        description: "NotFound"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Pedido no encontrado" }
+ *
  */
 server.put("/pedidos/:codigo", esLogin, validoIdPedido, (req, res) => {
   let { tokenDeLogin } = req.headers; // quien está pidiendo
@@ -457,6 +580,16 @@ server.put("/pedidos/:codigo", esLogin, validoIdPedido, (req, res) => {
  *        schema:
  *          type: "string"
  *          example: [{ "nombre": string, "descripcion": string, "icono": string }]
+ *      "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
+ *      "403":
+ *        description: "Forbidden"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "No es Administrador" }
  */
 server.get("/medioDePago", esLogin, (req, res) => {
   res.status(HTTP_STATUS.Ok).json(listaMedioDePagos);
@@ -482,8 +615,20 @@ server.get("/medioDePago", esLogin, (req, res) => {
  *    responses:
  *      "201":
  *        description: "MedioDePago creado"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "MedioDePago creado" }
+ *     "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
+ *      "403":
+ *        description: "Forbidden"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "No es Administrador" }
  */
-
 server.post("/medioDePago", esLogin, esAdmin, (req, res) => {
   let { nombre, descripcion, icono } = req.body;
 
@@ -518,9 +663,25 @@ server.post("/medioDePago", esLogin, esAdmin, (req, res) => {
  *      - "application/json"
  *    responses:
  *      "200":
- *        description: " medio de pago modificado"
+ *        description: "MedioDePago actualizado"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "MedioDePago actualizado" }
+ *      "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
+ *      "403":
+ *        description: "Forbidden"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "No es Administrador" }
  *      "404":
- *        description: "Medio de pago no encontrado"
+ *        description: "NotFound"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "MedioDePago no encontrado" }
  */
 server.put("/medioDePago/:codigo", esLogin, esAdmin, validoIdMedioPago, (req, res) => {
   let { codigo } = req.params;
@@ -556,9 +717,25 @@ server.put("/medioDePago/:codigo", esLogin, esAdmin, validoIdMedioPago, (req, re
  *      - "application/json"
  *    responses:
  *      "200":
- *        description: "Medio de pago eliminado"
+ *        description: "MedioDePago eliminado"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "MedioDePago eliminado" }
+ *      "401":
+ *        description: "Unauthorized"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "Usuario no logueado" }
+ *      "403":
+ *        description: "Forbidden"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "No es Administrador" }
  *      "404":
- *        description: "Medio de pago no encontrado"
+ *        description: "NotFound"
+ *        schema:
+ *          type: "string"
+ *          example: { "mensaje": "MedioDePago no encontrado" }
  */
 server.delete("/medioDePago/:codigo", esLogin, esAdmin, validoIdMedioPago, (req, res) => {
   let { codigo } = req.params;
